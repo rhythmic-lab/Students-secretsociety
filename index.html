@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Secret Society | Paper-Chasers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster&display=swap" rel="stylesheet">
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            /* Tech-Mystical Palette Restored */
+            --brand-obsidian: #0d0d12;
+            --brand-mystic-purple: #7b2cbf;
+            --brand-cyber-cyan: #00f5ff;
+            --brand-void-pink: #ff00c8;
+        }
+        body { margin: 0; font-family: 'Verdana', sans-serif; line-height: 1.6; color: #e0e0e0; background-color: var(--brand-obsidian); }
+        
+        /* PROTECTION STYLING */
+        #root-layer { display: none; }
+        .no-js-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; color: var(--brand-cyber-cyan); 
+            display: flex; justify-content: center; align-items: center; 
+            z-index: 10000; text-align: center;
+        }
+
+        .top-orange-bar { background-color: var(--brand-mystic-purple); color: white; padding: 12px; text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 2px; }
+        .main-header { background: #16161d; padding: 20px 0; border-bottom: 2px solid var(--brand-cyber-cyan); text-align: center; }
+        .hero { 
+            background: linear-gradient(rgba(13, 13, 18, 0.85), rgba(123, 44, 191, 0.4));
+            background-size: cover; color: white; padding: 100px 20px; text-align: center; border-bottom: 8px solid var(--brand-void-pink);
+        }
+        .hero h1 { font-family: 'Lobster', cursive; font-size: 4.5rem; text-shadow: 0 0 20px var(--brand-cyber-cyan); }
+        .big-box { background: #1a1a24; padding: 40px; margin-bottom: 50px; border-radius: 0px; border-top: 10px solid var(--brand-cyber-cyan); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .section-head { color: var(--brand-cyber-cyan); font-weight: 900; font-size: 32px; margin-bottom: 25px; text-transform: uppercase; }
+        
+        .full-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; }
+        .center-box { background: #1a1a24; color: white; width: 90%; max-width: 420px; padding: 30px; border-radius: 10px; border-top: 8px solid var(--brand-void-pink); position: relative; max-height: 90vh; overflow-y: auto; text-align: center; }
+        .close-x { position: absolute; top: 10px; right: 15px; font-size: 25px; cursor: pointer; color: var(--brand-void-pink); font-weight: bold; }
+        
+        .my-id-card { background: #252533; border: 2px dashed var(--brand-cyber-cyan); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; }
+        .friend-card { background: #252533; padding: 12px; margin-top: 10px; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--brand-mystic-purple); text-align: left; }
+        #chat-flow { height: 300px; overflow-y: auto; background: #0d0d12; border: 1px solid #333; padding: 10px; margin-bottom: 10px; border-radius: 5px; text-align: left; color: #00ff41; font-family: 'Courier New', monospace; }
+        
+        .status-tag { font-size: 11px; font-weight: bold; padding: 3px 7px; border-radius: 3px; text-transform: uppercase; }
+        .status-pending { background: #444; color: #aaa; }
+        .status-accepted { background: var(--brand-mystic-purple); color: white; }
+
+        .fab-container { position: fixed; bottom: 20px; z-index: 1000; }
+        .fab-left { left: 20px; }
+        .fab-right { right: 20px; }
+        .action-btn { background: var(--brand-mystic-purple); color: white; border: 1px solid var(--brand-cyber-cyan); padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 0 15px var(--brand-mystic-purple); transition: 0.3s; }
+        .action-btn:hover { background: var(--brand-void-pink); }
+        
+        footer { background: #000; color: white; padding: 80px 20px; text-align: center; border-top: 10px solid var(--brand-cyber-cyan); }
+        input.form-control { background: #0d0d12; border: 1px solid #444; color: var(--brand-cyber-cyan); }
+        input.form-control:focus { background: #1a1a24; border-color: var(--brand-void-pink); color: white; }
+    </style>
+</head>
+<body onload="initApp()">
+
+    <noscript>
+        <div class="no-js-screen">
+            <div>
+                <h1 style="font-family: 'Lobster'; font-size: 3.5rem;">Access Denied</h1>
+                <p>The Society requires JavaScript to protect its secrets.</p>
+            </div>
+        </div>
+    </noscript>
+
+    <div id="root-layer">
+
+        <div class="top-orange-bar">OFFICIAL NOTICE: IF I CAN'T FIND IT IN MY BAG, IT DOESN'T EXIST.</div>
+
+        <div class="main-header">
+            <h2 style="color: var(--brand-cyber-cyan); margin: 0; font-weight: bold; letter-spacing: 4px;">SOCIETY HUB</h2>
+        </div>
+
+        <div class="hero">
+            <div class="container">
+                <h1>The Secret Society</h1>
+                <p style="font-size: 24px;">Welcome to the era of the heavy backpack and the mysterious disappearing eraser.</p>
+            </div>
+        </div>
+
+        <div id="request-popup" class="full-overlay">
+            <div class="center-box">
+                <h3 class="font-weight-bold">Squad Invitation</h3>
+                <p id="popup-text" class="my-4"></p>
+                <div class="d-flex justify-content-center">
+                    <button id="popup-accept" class="btn btn-success mx-2 font-weight-bold">ACCEPT</button>
+                    <button id="popup-decline" class="btn btn-danger mx-2 font-weight-bold">DECLINE</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-5">
+            <div class="big-box">
+                <h2 class="section-head">The Era of the Heavy Backpack</h2>
+                <p>Welcome to the era of the heavy backpack and the mysterious disappearing eraser. This is the stage of life where your primary job is carrying 15kg of paper around while trying to remember if today is a "Day A" or a "Day B" schedule. It’s a multi-year test to see if a human spine can actually fold in half.</p>
+            </div>
+
+            <div class="big-box">
+                <h2 class="section-head">The Daily Infrastructure of Chaos</h2>
+                <p><strong>The "Manual" Classroom:</strong> Where the primary technology is a chalkboard that squeaks in a way that physically hurts, and a pencil sharpener that either eats your pencil entirely or gives you a point that breaks the second it touches paper.</p>
+                <p><strong>The Backpack:</strong> A portable mountain. It’s filled with crumpled handouts from three months ago, a sweater you forgot you owned, and five different notebooks that all look exactly the same until you open them to the wrong subject.</p>
+                <p><strong>The Desk:</strong> A tiny wooden square that somehow has to hold a textbook, a notebook, a pencil box, and your hopes and dreams. It’s also where you go to "focus," but usually just end up doodling 3D cubes on the margins of your math homework.</p>
+            </div>
+
+            <div class="big-box">
+                <h2 class="section-head">The Cast of Characters (The Archetypes)</h2>
+                <p><strong>The Academic Weapon:</strong> They have a 12-color pen set and a ruler for everything. Their notes look like a work of art, while yours look like a squirrel tried to write in cursive.</p>
+                <p><strong>The Ghost:</strong> They always seem to be "in the bathroom" or "at the nurse’s office" whenever there’s a surprise quiz. They appear for the bell and vanish before the teacher can say "homework."</p>
+                <p><strong>The Last-Minute Legend:</strong> They finish the entire homework assignment in the two minutes between classes, using the locker next to them as a desk.</p>
+                <p><strong>The Professional Borrower:</strong> They show up to a geometry class with nothing. Signature Move: "Can I borrow a pencil? Do you have a spare sheet? Can I use your sharpener? Does anyone have an eraser?"</p>
+            </div>
+
+            <div class="big-box">
+                <h2 class="section-head">The Awakening: The Secret Society</h2>
+                <p>After experiencing the hard life—after the hand cramps from writing essays by hand and the tragedy of losing your favorite pen—something shifts. All of a sudden, you trigger <strong>The Mantra</strong>. It’s that moment when you’re staring at a pile of textbooks and you whisper the sacred words: <em>"If I can't find it in my bag, it doesn't exist."</em></p>
+                <p>With those words, you are initiated into the Secret Society of the Paper-Chasers. Society Perks include:</p>
+                <ul>
+                    <li><strong>Ink-Sense:</strong> The ability to tell exactly how much ink is left in a pen just by the weight of it.</li>
+                    <li><strong>The Paper-Fold:</strong> Mastering the art of folding a handout so small it fits into your pocket, only to forget it exists until it goes through the laundry.</li>
+                    <li><strong>The Silent Language:</strong> Communicating an entire "Is the teacher looking?" conversation with your friend using nothing but eyebrow movements.</li>
+                </ul>
+            </div>
+
+            <div class="big-box">
+                <h2 class="section-head">The Integrated Life Cycle</h2>
+                <p><strong>Monday:</strong> "My notebooks are labeled. My pencils are sharp. I am a genius."</p>
+                <p><strong>Wednesday:</strong> "I have lost my ruler, my dignity, and my social studies notes."</p>
+                <p><strong>Friday:</strong> "The Mantra has been spoken. I am one with the Society. See you at the bus stop."</p>
+            </div>
+        </div>
+
+        <div id="login-screen" class="full-overlay" style="display: flex;">
+            <div class="center-box">
+                <h3 class="font-weight-bold">Society Registry</h3>
+                <p class="small text-muted">Join the database. Your real name is hidden from strangers.</p>
+                <input type="text" id="reg-name" class="form-control mb-3" placeholder="Real Name">
+                <input type="password" id="reg-pass" class="form-control mb-3" placeholder="Secret PIN">
+                <button class="btn btn-primary btn-block font-weight-bold" onclick="registerUser()">START CHASING</button>
+            </div>
+        </div>
+
+        <div id="squad-screen" class="full-overlay">
+            <div class="center-box">
+                <span class="close-x" onclick="hideScreens()">&times;</span>
+                <h3 class="font-weight-bold">Private Squad</h3>
+                <div id="my-identity-display" class="my-id-card"></div>
+                <div class="input-group mb-3">
+                    <input type="number" id="search-id" class="form-control" placeholder="Guest ID...">
+                    <div class="input-group-append"><button class="btn btn-primary" onclick="sendFriendRequest()">Add</button></div>
+                </div>
+                <div id="squad-list"></div>
+            </div>
+        </div>
+
+        <div id="chat-screen" class="full-overlay">
+            <div class="center-box">
+                <span class="close-x" onclick="hideScreens()">&times;</span>
+                <h3 class="font-weight-bold">Live Society Chat</h3>
+                <div id="chat-flow"></div>
+                <div class="input-group">
+                    <input type="text" id="chat-msg" class="form-control" placeholder="Send a message...">
+                    <div class="input-group-append"><button class="btn btn-primary" onclick="sendChat()">Send</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fab-container fab-left"><button class="action-btn" onclick="showScreen('squad-screen')">👥 SQUAD</button></div>
+        <div class="fab-container fab-right"><button class="action-btn" onclick="showScreen('chat-screen')">💬 ROAST</button></div>
+
+        <footer>
+            <p class="footer-h3" style="font-family: 'Lobster'; font-size: 3rem; color: var(--brand-cyber-cyan);">"The Society Protects."</p>
+            <p style="font-size: 20px; margin-top: 20px;">I have three chapters to read, a project I haven't started, and a pencil with no eraser. The Mantra is active.</p>
+            <div style="margin-top: 40px; opacity: 0.6; font-size: 12px; letter-spacing: 1px;">
+                &copy; 2026 The Secret Society of Paper-Chasers. No refunds for lost erasers or broken graphite.
+            </div>
+        </footer>
+    </div> 
+
+    <script>
+        // --- SECURITY SCRIPTS ---
+        (function() {
+            function exitSite() { window.location.href = "about:blank"; }
+            document.getElementById('root-layer').style.display = 'block';
+            document.addEventListener('contextmenu', e => { e.preventDefault(); exitSite(); });
+            document.onkeydown = function (e) {
+                if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) {
+                    exitSite();
+                    return false;
+                }
+            };
+            setInterval(function() {
+                const start = performance.now();
+                debugger;
+                if (performance.now() - start > 100) exitSite();
+            }, 500);
+        })();
+
+        // Obfuscated Key (Base64 version of your key)
+        const _vK = "QUl6YVN5RF93T0FwcG9ZWFlrbUxKdU1uaThlbzRhem1NYU5malE4";
+
+        const firebaseConfig = {
+            apiKey: atob(_vK),
+            authDomain: "bengai-ab0fc.firebaseapp.com",
+            projectId: "bengai-ab0fc",
+            storageBucket: "bengai-ab0fc.firebasestorage.app",
+            messagingSenderId: "47617471212",
+            appId: "1:47617471212:web:8a00bdbbd1b6f813ecebc9"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let deviceID = localStorage.getItem("society_uid");
+        let myData = null;
+        let mySquad = []; 
+
+        async function initApp() {
+            if (deviceID) {
+                const doc = await db.collection("users").doc(deviceID).get();
+                if (doc.exists) {
+                    myData = doc.data();
+                    document.getElementById('login-screen').style.display = 'none';
+                    updateMyIdentityUI();
+                    startListeners();
+                }
+            }
+        }
+
+        function updateMyIdentityUI() {
+            if(myData) {
+                document.getElementById('my-identity-display').innerHTML = `
+                    <div style="font-size:11px; color:var(--brand-cyber-cyan); font-weight:bold;">YOUR PROFILE</div>
+                    <div style="font-size:18px;"><b>${myData.real_name}</b></div>
+                    <div class="badge badge-info">Guest ID: ${myData.guest_id}</div>
+                    <div class="mt-2"><small onclick="logout()" style="color:var(--brand-void-pink); cursor:pointer;">Reset Account</small></div>
+                `;
+            }
+        }
+
+        async function registerUser() {
+            const name = document.getElementById('reg-name').value.trim();
+            const pin = document.getElementById('reg-pass').value;
+            if(!name || !pin) return alert("Fill all fields!");
+
+            // --- UNIQUE USERNAME CHECK ---
+            const existing = await db.collection("users").where("real_name", "==", name).get();
+            if(!existing.empty) {
+                return alert("This name is already registered. Choose another alias.");
+            }
+
+            deviceID = "dev_" + Math.random().toString(36).substr(2, 9);
+            const gID = Math.floor(1000 + Math.random() * 9000);
+            myData = { real_name: name, guest_id: gID, pin: pin, uid: deviceID };
+            await db.collection("users").doc(deviceID).set(myData);
+            localStorage.setItem("society_uid", deviceID);
+            location.reload();
+        }
+
+        function startListeners() {
+            db.collection("chats").orderBy("time", "asc").limitToLast(50).onSnapshot(snap => {
+                const flow = document.getElementById('chat-flow');
+                flow.innerHTML = "";
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    const isFriend = mySquad.includes(m.sender_uid);
+                    const label = (m.sender_uid === deviceID || isFriend) ? m.name : "Guest #" + m.guest_id;
+                    flow.innerHTML += `<div><b style="color:var(--brand-cyber-cyan)">${label}:</b> ${m.text}</div>`;
+                });
+                flow.scrollTop = flow.scrollHeight;
+            });
+
+            db.collection("friends").where("pair", "array-contains", deviceID).onSnapshot(async snap => {
+                const list = document.getElementById('squad-list');
+                list.innerHTML = "";
+                mySquad = []; 
+
+                snap.docChanges().forEach(change => {
+                    const f = change.doc.data();
+                    if (change.type === "added" && f.status === "pending" && f.to === deviceID) {
+                        triggerCentralPopup(change.doc.id, f.from_gid);
+                    }
+                });
+
+                for (const doc of snap.docs) {
+                    const f = doc.data();
+                    const otherUID = f.pair.find(id => id !== deviceID);
+                    const uDoc = await db.collection("users").doc(otherUID).get();
+                    if(!uDoc.exists) continue;
+                    
+                    const u = uDoc.data();
+                    const accepted = f.status === "accepted";
+                    if(accepted) mySquad.push(otherUID);
+
+                    const display = accepted ? u.real_name : "Guest #" + u.guest_id;
+                    let action = `<span class="status-tag status-pending">Pending</span>`;
+                    
+                    if(f.status === "pending" && f.to === deviceID) {
+                        action = `<button class="btn btn-sm btn-success" onclick="acceptFriend('${doc.id}')">Accept</button>`;
+                    } else if (accepted) {
+                        action = `<div>
+                                    <span class="status-tag status-accepted mr-2">Friend</span>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="unfriend('${doc.id}')">Unfriend</button>
+                                  </div>`;
+                    }
+
+                    list.innerHTML += `<div class="friend-card">
+                        <div><b>${display}</b><br><small>ID: ${u.guest_id}</small></div>
+                        <div>${action}</div>
+                    </div>`;
+                }
+            });
+        }
+
+        function triggerCentralPopup(docId, gid) {
+            const popup = document.getElementById('request-popup');
+            document.getElementById('popup-text').innerText = `Guest #${gid} wants to reveal identities. Accept?`;
+            document.getElementById('popup-accept').onclick = async () => {
+                await db.collection("friends").doc(docId).update({ status: "accepted" });
+                popup.style.display = 'none';
+            };
+            document.getElementById('popup-decline').onclick = async () => {
+                await db.collection("friends").doc(docId).delete();
+                popup.style.display = 'none';
+            };
+            popup.style.display = 'flex';
+        }
+
+        async function sendFriendRequest() {
+            const gid = parseInt(document.getElementById('search-id').value);
+            if(gid === myData.guest_id) return alert("You can't add yourself!");
+            const q = await db.collection("users").where("guest_id", "==", gid).get();
+            if(q.empty) return alert("Student not found!");
+            const targetUID = q.docs[0].id;
+            await db.collection("friends").add({
+                pair: [deviceID, targetUID], from: deviceID, from_gid: myData.guest_id, to: targetUID, status: "pending"
+            });
+            alert("Request Sent!");
+            document.getElementById('search-id').value = "";
+        }
+
+        async function acceptFriend(id) { await db.collection("friends").doc(id).update({ status: "accepted" }); }
+
+        async function unfriend(id) {
+            if(confirm("Are you sure you want to remove this friend? You will both hide your names again.")) {
+                await db.collection("friends").doc(id).delete();
+            }
+        }
+
+        async function sendChat() {
+            const msg = document.getElementById('chat-msg').value;
+            if(!msg || !myData) return;
+            await db.collection("chats").add({
+                name: myData.real_name, guest_id: myData.guest_id, sender_uid: deviceID, text: msg,
+                time: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('chat-msg').value = "";
+        }
+
+        function logout() { localStorage.clear(); location.reload(); }
+        function showScreen(id) { document.getElementById(id).style.display = 'flex'; }
+        function hideScreens() { document.querySelectorAll('.full-overlay').forEach(o => o.style.display = 'none'); }
+    </script>
+</body>
+</html>
