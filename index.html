@@ -60,6 +60,20 @@
         footer { background: #000; color: white; padding: 80px 20px; text-align: center; border-top: 10px solid var(--brand-cyber-cyan); }
         input.form-control { background: #0d0d12; border: 1px solid #444; color: var(--brand-cyber-cyan); }
         input.form-control:focus { background: #1a1a24; border-color: var(--brand-void-pink); color: white; }
+
+        /* --- MOBILE OVERRIDE LOGIC --- */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem !important; }
+            .hero p { font-size: 18px !important; }
+            .big-box { padding: 25px 15px !important; margin-bottom: 25px !important; border-top-width: 6px !important; }
+            .section-head { font-size: 24px !important; }
+            .center-box { width: 95% !important; padding: 20px !important; max-height: 85vh !important; }
+            .action-btn { padding: 12px 20px !important; font-size: 13px !important; }
+            .fab-left { left: 10px; }
+            .fab-right { right: 10px; }
+            footer { padding: 40px 15px !important; }
+            .footer-h3 { font-size: 2.2rem !important; }
+        }
     </style>
 </head>
 <body onload="initApp()">
@@ -234,6 +248,10 @@
                     startListeners();
                 }
             }
+            // Trigger Mobile View Check
+            if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                console.log("Society Mobile Protocol: Engaged.");
+            }
         }
 
         function updateMyIdentityUI() {
@@ -252,7 +270,6 @@
             const pin = document.getElementById('reg-pass').value;
             if(!name || !pin) return alert("Fill all fields!");
 
-            // --- UNIQUE USERNAME CHECK ---
             const existing = await db.collection("users").where("real_name", "==", name).get();
             if(!existing.empty) {
                 return alert("This name is already registered. Choose another alias.");
